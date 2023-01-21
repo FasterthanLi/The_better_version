@@ -31,6 +31,6 @@ class TaskSerializer(DynamicFieldsModelSerializer):
             "body",
             "author",
             "deadline",
-            "done",
+            'completed',
         )
         model = Task
