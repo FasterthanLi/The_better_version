@@ -43,4 +43,4 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
         send_email_task.delay(subject, message, from_email, recipient_list)
         return Response({"status": "success"})
 
-
+#test a new
