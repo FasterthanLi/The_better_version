@@ -5,10 +5,12 @@ from .permissions import IsAuthorOrReadOnly
 from .serializers import TaskSerializer
 from rest_framework.response import Response
 from .task1 import send_email_task
+from rest_framework import status
+from rest_framework.authentication import BasicAuthentication, SessionAuthentication
 
 
 class TaskList(generics.ListCreateAPIView):
-    permission_classes = (IsAuthorOrReadOnly,) 
+    permission_classes = (IsAuthorOrReadOnly, BasicAuthentication, SessionAuthentication) 
     queryset = Task.objects.all()
     serializer_class = TaskSerializer
 
@@ -43,4 +45,11 @@ class TaskDetail(generics.RetrieveUpdateDestroyAPIView):
         send_email_task.delay(subject, message, from_email, recipient_list)
         return Response({"status": "success"})
 
-#test a new
+    def put(self, request, pk):
+        task = Task.objects.get(id=pk)
+        serializer = TaskSerializer(task, data=request.data)
+        if serializer.is_valid():
+            serializer.save()
+            return Response(serializer.data)
+        return Response(serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
